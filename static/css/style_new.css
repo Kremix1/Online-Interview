@@ -1,0 +1,240 @@
+@charset "UTF-8";
+/*Обнуление*/
+@import url("https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=PT+Sans:ital,wght@0,400;0,700;1,400&family=Raleway:ital,wght@0,400;0,500;0,600;1,400&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=PT+Sans:ital,wght@0,400;0,700;1,400&family=Raleway:ital,wght@0,400;0,500;0,600;1,400&family=Roboto+Slab&display=swap");
+* {
+  padding: 0;
+  margin: 0;
+  border: 0;
+}
+
+*, *:before, *:after {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+:focus, :active {
+  outline: none;
+}
+
+a:focus, a:active {
+  outline: none;
+}
+
+nav, footer, header, aside {
+  display: block;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+  font-size: 100%;
+  line-height: 1;
+  font-size: 14px;
+  -ms-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+input, button, textarea {
+  font-family: inherit;
+}
+
+input::-ms-clear {
+  display: none;
+}
+
+button {
+  cursor: pointer;
+}
+
+button::-moz-focus-inner {
+  padding: 0;
+  border: 0;
+}
+
+a, a:visited {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+ul li {
+  list-style: none;
+}
+
+img {
+  vertical-align: text-top;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-size: inherit;
+  font-weight: 400;
+}
+
+/*--------------------*/
+body {
+  font-family: "Raleway";
+  color: #FFFFFF;
+}
+
+.wrapper {
+  min-height: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.menu {
+  max-width: 1152px;
+  background: url("../img/bg-b-1.png") 0 0/100% 100% no-repeat;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-flex: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+}
+
+.left {
+  width: 10%;
+  height: 100%;
+  padding: 10px 0 0 10px;
+}
+.left__logo {
+  font-style: italic;
+  width: 40%;
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 28px;
+  letter-spacing: 0.01em;
+  -webkit-writing-mode: vertical-rl;
+      -ms-writing-mode: tb-rl;
+          writing-mode: vertical-rl;
+  -webkit-transform: rotate(-180deg);
+          transform: rotate(-180deg);
+  text-transform: uppercase;
+}
+
+.right {
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 auto;
+          flex: 1 1 auto;
+  padding: 0 0 0 75px;
+}
+.right__logo {
+  margin: 68px 0 155px 0;
+  font-style: italic;
+  font-size: 75px;
+  line-height: 88px;
+}
+.right__interview {
+  width: 350px;
+  font-size: 50px;
+  line-height: 50px;
+  letter-spacing: 0.085em;
+  margin: 0 0 48px 0;
+}
+.right__interview-name {
+  font-size: 24px;
+  line-height: 28px;
+  text-transform: uppercase;
+}
+.right__footer {
+  margin: 131px 0 0 0;
+}
+.right__footer .link {
+  font-weight: 500;
+  font-size: 22px;
+  line-height: 26px;
+  color: #3A81C2;
+}
+
+.button {
+  padding: 17px 0 0 0;
+  width: 274px;
+  height: 61px;
+  background: #fff;
+  text-align: center;
+}
+
+.info {
+  -webkit-box-flex: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+  max-width: 1408px;
+  background: url("../img/bg-1.png") 0 0/100% 100% no-repeat;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+}
+.info__main {
+  padding: 279px 0 0 107px;
+  margin: 0 0 130px 0;
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 auto;
+          flex: 1 1 auto;
+}
+.info__list {
+  margin: 0 0 82px 0;
+  border-left: 4px solid #fff;
+  padding: 0 0 0 30px;
+}
+.info__list_item {
+  width: 450px;
+  font-size: 33px;
+  line-height: 32px;
+  letter-spacing: 0.08em;
+  margin: 0 0 24px 0;
+}
+.info__list_item:last-child {
+  font-weight: 500;
+  font-size: 40px;
+  line-height: 47px;
+  margin: 0 0;
+}
+.info__p {
+  border-left: 4px solid #fff;
+  padding: 0 0 0 30px;
+  font-weight: 600;
+  font-size: 35px;
+  line-height: 32px;
+  letter-spacing: 0.08em;
+  width: 480px;
+}
+.info__footer {
+  margin: 0 0 0 auto;
+  padding: 0 100px 30px 0;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+.info__footer_officialSite {
+  margin: 0 30px 0 0;
+  font-style: italic;
+  font-size: 24px;
+  line-height: 28px;
+  color: #fff;
+}
+.info__footer_telegram {
+  margin: 0 30px 0 0;
+}
+.info__footer_telegram img {
+  width: 30px;
+}
+.info__footer_phone {
+  font-family: "Roboto Slab";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 21px;
+  -ms-flex-item-align: end;
+      align-self: flex-end;
+  padding: 0 0 5px 0;
+}

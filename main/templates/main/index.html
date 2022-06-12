@@ -1,0 +1,46 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <title>66bit-Interview</title>
+        <meta http-equiv="content-type" content="text/html;charset=UTF-8">
+        <meta name="viewport" content="width=device-width">
+        <link rel="stylesheet" href ="{% static 'css/style_new.css'%}">
+    </head>
+    <body>
+        <div class="wrapper">
+            <div class="menu">
+                <div class="left">
+                    <div class="left__logo">разработка программного <br> обеспечения</div>
+                </div>
+                <div class="right">
+                    <div class="right__logo">66bit</div>
+                    <div class="menu-center">
+                        <div class="right__interview">приглашает тебя пройти интервью на вакансию</div>
+                        <div class="right__interview-name">{{ post }}</div>
+                    </div>
+                    <div class="right__footer">
+                        <a href="interview/?post={{ post }}&id={{ id }}" class="link"><div class="button">Начать интервью</div></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info">
+                <div class="info__main">
+                    <ul class="info__list">
+                        <li class="info__list_item">Проверьте правильность работы камеры и микрофона</li>
+                        <li class="info__list_item">Включите камеру</li>
+                        <li class="info__list_item">Пройдите интервью</li>
+                        <li class="info__list_item">Готово!</li>
+                    </ul>
+                    <p class="info__p">Ваше интервью направится прямиком работодателю</p>
+                </div>
+                <div class="info__footer">
+                    <a class="link" href="https://66bit.ru"><div class="info__footer_officialSite">66bit</div></a>
+                    <a class="link" href="#"><div class="info__footer_telegram"><img src="{% static 'img/tg.png' %}"  alt="tg"></div></a>
+                    <div class="info__footer_phone">+7 (343) - 000 - 00 - 00</div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

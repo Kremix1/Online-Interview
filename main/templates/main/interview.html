@@ -1,0 +1,54 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <title>66bit-Interview</title>
+        <meta http-equiv="content-type" content="text/html;charset=UTF-8">
+        <link rel="stylesheet" href="{%static 'css/interview-style_new.css'%}">
+    </head>
+    <body>
+        <div class="content">
+            <div class="logo">
+                <div class="logo__h1">66bit</div>
+                <div class="logo__h2">{{ post }}</div>
+            </div>
+            <div class="wrapper">
+                <div class="wrapper__video"><video class="webcam" id="video" autoplay></video></div>
+                <div class="wrapper__content">
+                    <div class="wrapper__content_numbers">
+                        <div class="wrapper__content_left-number item item" id="firstNumber"></div>
+                        <div class="wrapper__content_central-number item" id="secondNumber"></div>
+                        <div class="wrapper__content_right-number item" id="thirdNumber"></div>
+                    </div>
+                    <div class="wrapper__content_question" id="question">Почему выбрали нас...</div>
+                </div>
+                <div class="wrapper__footer">
+                    <div class="nextButton" id="nextButton"><a class="link" onclick="nextSlide('{{ post|safe }}', '{{ id|safe }}')"><div class="wrapper__footer_button" id="nextButtonContent">Далее</div></a></div>
+                    <div class="wrapper__footer_line"></div>
+                </div>
+            </div>
+        </div>
+        <div id="popup" class="popup">
+            <div class="popup__body">
+                <div class="popup__content">
+                    <div class="popup__title">Проверка</div>
+                    <div class="popup__text_content">
+                        <div id="start-camera" class="popup__text mic">Веб-камера</div>
+                        <div id="start-screen" class="popup__text screen">Микрофон и Экран</div>
+                    </div>
+                    <a id="start-interview" class="start-recording" onclick="closePopup('{{ post|safe }}')" href="#" class="popup_close"><div class="popup__footer">Перейти к интервью</div></a>
+                </div>
+            </div>
+        </div>
+
+        <a href="" id="dop"></a>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        {% csrf_token %}
+        <script src="{%static 'js/stream_actions.js'%}"></script>
+        <script src="{%static 'js/webcam_video.js'%}"></script>
+        <script src="{%static 'js/visibility.js'%}"></script>
+        <script src="{%static 'js/popup.js'%}"></script>
+        <script src="{%static 'js/record.js'%}"></script>
+        <script src="{%static 'js/slides.js'%}"></script>
+    </body>
+</html>
