@@ -1,16 +1,20 @@
 'use strict'
+let dop = document.querySelector('#dop');
 
 //START INTERVIEW
 let start_button = document.querySelector('#start-interview');
 start_button.style.display = "none";
 let checkScreen, checkMedia = false;
+let InterviewStartTime = null;
+let InterviewSecondsCount = 0
 let popup = document.querySelector('#popup');
 let tasks = [];
 function closePopup(post) {
 	popup.style.display = "none";
 	popup.style.opacity = "0";
 	popup.style.visibility = "hidden";
-
+	startRecording();
+	InterviewStartTime = Date.now();
 	$.ajax({
 			data: $(this).serialize(),
 			url: "get_tasks",
@@ -23,11 +27,15 @@ function closePopup(post) {
 }
 
 // ЗАПИСЬ ОТСЮДА
+
+
+
 let stream = null,
 	audio = null,
 	mixedStream = null,
 	chunks = [],
-	recorder = null;
+	recorder = null,
+	startButton = null;
 
 async function setupStream () {
 	try {
@@ -70,7 +78,6 @@ function handleDataAvailable (e) {
 	chunks.push(e.data);
 }
 
-let dop = document.querySelector('#dop');
 let videoURL = null;
 function handleStop (e) {
 	const blob = new Blob(chunks, { 'type' : 'video/mp4' });
@@ -86,17 +93,14 @@ function handleStop (e) {
 	console.log('Recording stopped');
 }
 
-
-let startButton = document.querySelector('#start-screen');
+startButton = document.querySelector('#start-screen');
 startButton.addEventListener('click', function(){
 	checkScreen = true;
 		if (checkScreen && checkMedia)
 			start_button.style.display = 'block';
-	startRecording();
 });
 
-
-// ЭТО ТРАНСЛЯЦИЯ КАМЕРЫ ДЛЯ ПОЛЬЗОВАТЕЛЯ
+// ЭТО ТРАНСЛЯЦИЯ ДЛЯ ПОЛЬЗОВАТЕЛЯ
 let personStream = document.querySelector("#video");
 personStream.width = 220;
 
@@ -109,6 +113,7 @@ cameraButton.addEventListener('click', async function() {
 	cameraStreamView = await navigator.mediaDevices.getUserMedia({ video: true, audio : false});  // Включение самого ВИДЕО
 	personStream.srcObject = cameraStreamView;
 });
+
 
 
 
@@ -131,10 +136,39 @@ let question = document.querySelector('#question');
 
 
 showSlides(slideIndex);
-
-
 function nextSlide(post, id) {
 	var token = document.querySelector('[name=csrfmiddlewaretoken]').value;
+	// ТАЙМКОДЫ ВОПРОСОВ
+	let questionEndTime = Date.now();
+	let questionStartSeconds =  Math.round(InterviewSecondsCount % 60);
+	if (questionStartSeconds < 10) {
+		questionStartSeconds = "0" + questionStartSeconds
+	}
+	let questionEndSeconds = Math.round((InterviewSecondsCount + (questionEndTime - InterviewStartTime) / 1000) % 60);
+	if (questionEndSeconds < 10) {
+		questionEndSeconds = "0" + questionEndSeconds
+	}
+	let questionStartMinutes =  parseInt(InterviewSecondsCount / 60);
+	if (questionStartMinutes < 10) {
+		questionStartMinutes = "0" + questionStartMinutes
+	}
+	let questionEndMinutes = parseInt((InterviewSecondsCount + (questionEndTime - InterviewStartTime) / 1000) / 60);
+	if (questionEndMinutes < 10) {
+		questionEndMinutes = "0" + questionEndMinutes
+	}
+	let timeStamp = "Вопрос " + slideIndex + ": " + questionStartMinutes + ":" + questionStartSeconds + " - " + questionEndMinutes + ":" + questionEndSeconds;
+	InterviewSecondsCount = InterviewSecondsCount + (questionEndTime - InterviewStartTime) / 1000;
+	InterviewStartTime = questionEndTime;
+	$.ajax({
+				headers: {"X-CSRFToken": token},
+				url: "post_time_stamp",
+				type: "POST",
+				data: {
+					time_stamp: timeStamp,
+					post: post,
+					id: id
+				}
+			});
 	if (slideIndex <= tasks.length) {
 		if (slideIndex == 1) {
 			$.ajax({
@@ -159,33 +193,34 @@ function nextSlide(post, id) {
 		rightNumber.style.visibility = "hidden";
 		nextButtonContent.textContent = "Закончить интервью";
 		slideIndex += 1;
-		nextButton.addEventListener('click', function(){
-                stopRecording();
-            });
+
 	} else if (slideIndex > tasks.length) {
-			leftNumber.style.visibility ="hidden";
-            centralNumber.style.visibility ="hidden";
-            rightNumber.style.visibility ="hidden";
-            nextButton.style.visibility = "hidden";
-			personStream.style.visibility = "hidden";
-			question.textContent = "Благодарим вас за прохождение интервью! Ваша заявка будет рассмотрена в течении 2-х дней.";
-			let backVideo = document.querySelector('.wrapper__video');
-            backVideo.style.visibility = "hidden";
-			$.ajax({
-				headers: {"X-CSRFToken": token},
-				url: "post_video",
-				type: "POST",
-				data: {
-					download_screen_link : videoURL,
-					post : post,
-					id : id
-				},
-				success: function (response) {
-					console.log("video was posted")
-					console.log(videoURL)
-					console.log(this.data.download_screen_link)
-				}
-			});
+			nextButton.addEventListener('click', function(){
+                stopRecording();
+				leftNumber.style.visibility =
+                centralNumber.style.visibility =
+                rightNumber.style.visibility =
+                nextButton.style.visibility =
+                personStream.style.visibility = "hidden";
+				question.textContent = "Благодарим вас за прохождение интервью! Ваша заявка будет рассмотрена в течении 2-х дней.";
+				let backVideo = document.querySelector('.wrapper__video');
+				backVideo.style.visibility = "hidden";
+				setTimeout(()=> {$.ajax({
+					headers: {"X-CSRFToken": token},
+					url: "post_video",
+					type: "POST",
+					data: {
+						download_screen_link : videoURL,
+						post : post,
+						id : id
+					},
+					success: function (response) {
+						console.log("video was posted")
+						console.log(videoURL)
+						console.log(this.data.download_screen_link)
+					}
+				});}, 1000)
+            });
 	}
 }
 
@@ -193,10 +228,8 @@ function nextSlide(post, id) {
 function showSlides(n) {
 	leftNumber.textContent = n;
 	rightNumber.textContent = n + 1;
-	let slides = document.getElementsByClassName('item');
 }
-
-
+// QUESTIONS
 
 
 
