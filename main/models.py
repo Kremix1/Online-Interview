@@ -35,6 +35,7 @@ class User(models.Model):
     recommend = models.CharField('Рекомендую', max_length= 3, blank=True , null=True)
     start_date = models.DateTimeField("Дата прохождения интервью", blank=True , null=True)
     screen_link = models.CharField('Видео', max_length= 100, blank=True , null=True)
+    timecodes = models.TextField('Таймкоды', blank=True, null=True)
 
     def __str__(self):
         return self.name + " " + self.surname
@@ -56,9 +57,9 @@ class Comment(models.Model):
     def __str__(self):
         return self.comment
 
-    def examinee_name(self):
+    def examinee__name(self):
         return self.examinee
-    examinee_name.short_description = "Участник"
+    examinee__name.short_description = "Участник"
 
     class Meta:
         verbose_name = "комментарий"

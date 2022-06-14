@@ -5,14 +5,16 @@ let dop = document.querySelector('#dop');
 let start_button = document.querySelector('#start-interview');
 start_button.style.display = "none";
 let checkScreen, checkMedia = false;
-
+let InterviewStartTime = null;
+let InterviewSecondsCount = 0
 let popup = document.querySelector('#popup');
 let tasks = [];
 function closePopup(post) {
 	popup.style.display = "none";
 	popup.style.opacity = "0";
 	popup.style.visibility = "hidden";
-
+	startRecording();
+	InterviewStartTime = Date.now();
 	$.ajax({
 			data: $(this).serialize(),
 			url: "get_tasks",
@@ -96,7 +98,6 @@ startButton.addEventListener('click', function(){
 	checkScreen = true;
 		if (checkScreen && checkMedia)
 			start_button.style.display = 'block';
-	startRecording();
 });
 
 // ЭТО ТРАНСЛЯЦИЯ ДЛЯ ПОЛЬЗОВАТЕЛЯ
@@ -135,10 +136,39 @@ let question = document.querySelector('#question');
 
 
 showSlides(slideIndex);
-
-
 function nextSlide(post, id) {
 	var token = document.querySelector('[name=csrfmiddlewaretoken]').value;
+	// ТАЙМКОДЫ ВОПРОСОВ
+	let questionEndTime = Date.now();
+	let questionStartSeconds =  Math.round(InterviewSecondsCount % 60);
+	if (questionStartSeconds < 10) {
+		questionStartSeconds = "0" + questionStartSeconds
+	}
+	let questionEndSeconds = Math.round((InterviewSecondsCount + (questionEndTime - InterviewStartTime) / 1000) % 60);
+	if (questionEndSeconds < 10) {
+		questionEndSeconds = "0" + questionEndSeconds
+	}
+	let questionStartMinutes =  parseInt(InterviewSecondsCount / 60);
+	if (questionStartMinutes < 10) {
+		questionStartMinutes = "0" + questionStartMinutes
+	}
+	let questionEndMinutes = parseInt((InterviewSecondsCount + (questionEndTime - InterviewStartTime) / 1000) / 60);
+	if (questionEndMinutes < 10) {
+		questionEndMinutes = "0" + questionEndMinutes
+	}
+	let timeStamp = "Вопрос " + slideIndex + ": " + questionStartMinutes + ":" + questionStartSeconds + " - " + questionEndMinutes + ":" + questionEndSeconds;
+	InterviewSecondsCount = InterviewSecondsCount + (questionEndTime - InterviewStartTime) / 1000;
+	InterviewStartTime = questionEndTime;
+	$.ajax({
+				headers: {"X-CSRFToken": token},
+				url: "post_time_stamp",
+				type: "POST",
+				data: {
+					time_stamp: timeStamp,
+					post: post,
+					id: id
+				}
+			});
 	if (slideIndex <= tasks.length) {
 		if (slideIndex == 1) {
 			$.ajax({
@@ -190,7 +220,6 @@ function nextSlide(post, id) {
 						console.log(this.data.download_screen_link)
 					}
 				});}, 1000)
-
             });
 	}
 }
