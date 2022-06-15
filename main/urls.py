@@ -6,5 +6,6 @@ urlpatterns = [
     path("interview/", views.interview),
     path("interview/get_tasks", views.get_tasks, name = "get_tasks"),
     path('interview/post_data', views.post_data),
-    path('interview/post_video', views.post_video)
+    path('interview/post_video', views.post_video),
+    path('interview/post_interview_params', views.post_interview_params)
 ]
