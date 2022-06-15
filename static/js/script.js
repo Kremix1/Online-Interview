@@ -9,11 +9,12 @@ let InterviewStartTime = null;
 let InterviewSecondsCount = 0
 let popup = document.querySelector('#popup');
 let tasks = [];
+let onBlurik = "Нет";
+
 function closePopup(post) {
 	popup.style.display = "none";
 	popup.style.opacity = "0";
 	popup.style.visibility = "hidden";
-	startRecording();
 	InterviewStartTime = Date.now();
 	$.ajax({
 			data: $(this).serialize(),
@@ -24,6 +25,13 @@ function closePopup(post) {
 				question.textContent = tasks[0]
 			}
 	});
+	// VISIBILITY
+	let notFocus = null;
+	window.onblur = function() {
+		alert("Еще раз предупреждаем о том, что не стоит сворачивать эту вкладку, до окончания интервью.");
+		onBlurik = "Да";
+	};
+	// VISIBILITY
 }
 
 // ЗАПИСЬ ОТСЮДА
@@ -64,7 +72,6 @@ async function startRecording () {
 		recorder.ondataavailable = handleDataAvailable;
 		recorder.onstop = handleStop;
 		recorder.start(1000);
-		console.log('Recording started');
 	} else {
 		console.warn('No stream available.');
 	}
@@ -89,15 +96,16 @@ function handleStop (e) {
 
 	stream.getTracks().forEach((track) => track.stop());
 	audio.getTracks().forEach((track) => track.stop());
-
-	console.log('Recording stopped');
 }
 
 startButton = document.querySelector('#start-screen');
 startButton.addEventListener('click', function(){
 	checkScreen = true;
-		if (checkScreen && checkMedia)
+		if (checkScreen && checkMedia) {
 			start_button.style.display = 'block';
+			startRecording();
+		}
+
 });
 
 // ЭТО ТРАНСЛЯЦИЯ ДЛЯ ПОЛЬЗОВАТЕЛЯ
@@ -108,8 +116,10 @@ let cameraStreamView = null;
 let cameraButton = document.querySelector("#start-camera");
 cameraButton.addEventListener('click', async function() {
 	checkMedia = true;
-		if (checkScreen && checkMedia)
+		if (checkScreen && checkMedia) {
 			start_button.style.display = 'block';
+			startRecording();
+		}
 	cameraStreamView = await navigator.mediaDevices.getUserMedia({ video: true, audio : false});  // Включение самого ВИДЕО
 	personStream.srcObject = cameraStreamView;
 });
@@ -134,7 +144,7 @@ rightNumber.textContent = slideIndex + 1;
 
 let question = document.querySelector('#question');
 
-
+let timeStamps = "";
 showSlides(slideIndex);
 function nextSlide(post, id) {
 	var token = document.querySelector('[name=csrfmiddlewaretoken]').value;
@@ -156,19 +166,10 @@ function nextSlide(post, id) {
 	if (questionEndMinutes < 10) {
 		questionEndMinutes = "0" + questionEndMinutes
 	}
-	let timeStamp = "Вопрос " + slideIndex + ": " + questionStartMinutes + ":" + questionStartSeconds + " - " + questionEndMinutes + ":" + questionEndSeconds;
+	let timeStamp = "Вопрос " + ((slideIndex == tasks.length + 1) ? slideIndex - 1 : slideIndex) + ": " + questionStartMinutes + ":" + questionStartSeconds + " - " + questionEndMinutes + ":" + questionEndSeconds;
 	InterviewSecondsCount = InterviewSecondsCount + (questionEndTime - InterviewStartTime) / 1000;
 	InterviewStartTime = questionEndTime;
-	$.ajax({
-				headers: {"X-CSRFToken": token},
-				url: "post_time_stamp",
-				type: "POST",
-				data: {
-					time_stamp: timeStamp,
-					post: post,
-					id: id
-				}
-			});
+	timeStamps += timeStamp + "\n";
 	if (slideIndex <= tasks.length) {
 		if (slideIndex == 1) {
 			$.ajax({
@@ -205,6 +206,17 @@ function nextSlide(post, id) {
 				question.textContent = "Благодарим вас за прохождение интервью! Ваша заявка будет рассмотрена в течении 2-х дней.";
 				let backVideo = document.querySelector('.wrapper__video');
 				backVideo.style.visibility = "hidden";
+				$.ajax({
+					headers: {"X-CSRFToken": token},
+					url: "post_interview_params",
+					type: "POST",
+					data: {
+						onBlur: onBlurik,
+						time_stamps: timeStamps,
+						post: post,
+						id: id
+					}
+				});
 				setTimeout(()=> {$.ajax({
 					headers: {"X-CSRFToken": token},
 					url: "post_video",
@@ -213,15 +225,11 @@ function nextSlide(post, id) {
 						download_screen_link : videoURL,
 						post : post,
 						id : id
-					},
-					success: function (response) {
-						console.log("video was posted")
-						console.log(videoURL)
-						console.log(this.data.download_screen_link)
 					}
 				});}, 1000)
+				window.onblur = null;
             });
-	}
+		}
 }
 
 
@@ -230,22 +238,3 @@ function showSlides(n) {
 	rightNumber.textContent = n + 1;
 }
 // QUESTIONS
-
-
-
-// VISIBILITY
-let pollCount = 1;
-
-let poll = function() {
-	if (document.hidden) {
-		return;
-	}
-	pollCount++;
-};
-
-setInterval(poll, 1000);
-
-document.addEventListener('visibilitychange', function() {
-	console.log('Visibility поменяли на ' + document.visibilityState + ' !');
-});
-// VISIBILITY
