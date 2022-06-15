@@ -19,9 +19,9 @@ class Question(models.Model):
     def __str__(self):
         return self.question
 
-    def post_name(self):
+    def post__title(self):
         return self.post
-    post_name.short_description = "Должность(Post)"
+    post__title.short_description = "Должность"
 
     class Meta:
         verbose_name = "вопрос"
@@ -35,14 +35,15 @@ class User(models.Model):
     recommend = models.CharField('Рекомендую', max_length= 3, blank=True , null=True)
     start_date = models.DateTimeField("Дата прохождения интервью", blank=True , null=True)
     screen_link = models.CharField('Видео', max_length= 100, blank=True , null=True)
-    timecodes = models.TextField('Таймкоды', blank=True, null=True)
+    time_stamps = models.TextField('Таймкоды', blank=True, null=True)
+    not_focus = models.CharField('Сворачивание', max_length= 3, blank=True , null=True)
 
     def __str__(self):
-        return self.name + " " + self.surname
+        return self.surname + " " + self.name
 
-    def post_name(self):
+    def post__title(self):
         return self.post
-    post_name.short_description = "Должность (Post)"
+    post__title.short_description = "Должность"
 
     class Meta:
         verbose_name = "участник"
@@ -57,9 +58,9 @@ class Comment(models.Model):
     def __str__(self):
         return self.comment
 
-    def examinee__name(self):
+    def examinee__surname(self):
         return self.examinee
-    examinee__name.short_description = "Участник"
+    examinee__surname.short_description = "Участник"
 
     class Meta:
         verbose_name = "комментарий"
