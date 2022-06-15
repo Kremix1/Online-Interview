@@ -68,3 +68,15 @@ def post_video(request):
             user.screen_link = screen_link
             user.save()
     return HttpResponse("<h2></h2>")
+
+@csrf_protect
+def post_interview_params(request):
+    time_stamps = request.POST.get('time_stamps')
+    on_blur = request.POST.get('onBlur')
+    users = User.objects.all()
+    for user in users:
+        if user.id == int(request.POST.get("id")):
+            user.time_stamps = time_stamps
+            user.not_focus = on_blur
+            user.save()
+    return HttpResponse("<h2></h2>")
