@@ -7,57 +7,40 @@ from main.models import User, Post, Comment, Question
 
 @admin.register(User)
 class User(admin.ModelAdmin):
-    list_display = ("__str__", "post_name", "start_date", "recommend", "screen_link", "timecodes")
-    list_filter = ("post", "recommend")
+    list_display = ("__str__", "post__title", "start_date", "recommend", "screen_link", "time_stamps", 'not_focus',
+                    "view_comment_link")
+    list_filter = ("post__title", "recommend")
+    fieldsets = (
+        (None, {
+            'fields': ('name', 'surname', 'post')
+        }),
+        ('Interview results', {
+            'fields': ('start_date', 'recommend', 'screen_link', 'time_stamps', 'not_focus')
+        }),
+    )
 
+    def view_comment_link(self, obj):
+        count = obj.comment_set.count()
+        url = (
+            reverse("admin:main_comment_changelist")
+            + "?"
+            + urlencode({"examinee__surname": f"{obj.surname}"})
+        )
+        return format_html('<a href="{}">{} Comments</a>', url, count)
+    view_comment_link.short_description = "Comments"
 
-# from django.contrib import admin
-#
-#
-# @admin.register(User)
-# class UserAdmin(admin.ModelAdmin):
-#     fields = ('name', 'surname', 'post', 'start_date', 'recommend', 'screen_link', 'timecodes')
-#     fieldsets = (
-#         (None, {
-#             'fields': ('name', 'surname', 'post')
-#         }),
-#         ('Advanced options', {
-#             'fields': ('start_date', 'recommend', 'screen_link', 'timecodes')
-#         }),
-#     )
-#
-#     class Meta:
-#         verbose_name = "участник"
-#         verbose_name_plural = "участники"
-# @admin.register(User)
-# class UserAdmin(admin.ModelAdmin):
-#     fieldsets = (
-#         (None, {
-#             'fields': ('name', 'surname', 'post')
-#         }),
-#         ('Availability', {
-#             'fields': ('start_date', 'recommend', 'screen_link', 'timecodes')
-#         }),
-#     )
-#
-# class UserAdmin(admin.ModelAdmin):
-#     fields = ('name', 'surname', 'post')
-#
-#     def get_form(self, request, obj=None, **kwargs):
-#         form = super().get_form(request, obj, **kwargs)
-#         form.base_fields["recommend"].label = "First Name (Humans only!):"
-#         return form
 
 @admin.register(Comment)
 class Comment(admin.ModelAdmin):
-    list_display = ("examinee__name", "inspector", "comment")
-    search_fields = ("examinee__name__startswith", )
+    list_display = ("examinee__surname", "inspector", "comment")
+    search_fields = ("examinee__surname__startswith", )
+    list_filter = ("examinee__surname", )
 
 
 @admin.register(Question)
 class Question(admin.ModelAdmin):
-    list_display = ("post_name", "question")
-    list_filter = ("post",)
+    list_display = ("post__title", "question")
+    list_filter = ("post__title",)
 
 
 @admin.register(Post)
